@@ -15,8 +15,8 @@ app.use((req, res, next) => {
   if (origin && origin !== `http://${host}` && origin !== `https://${host}`) {
     return res.status(403).send('Forbidden: Requisição de origem não permitida');
   }
-  
-  //console.log('Request received', req.originalUrl);
+
+  console.log('Request received', req.originalUrl);
   next();
 });
 
@@ -24,33 +24,28 @@ serveFile()
 
 app.get('/login', async (req, res) => {
   try {
-    let url = req.url ? req.url == '/' ? './website/index.html' : req.url : './website/index.html';
-    console.log(`Reading file: ${url}`);
+    let url = req.url === '/' ? './website/index.html' : req.url;
     const data = await fs.readFile(url, 'utf-8');
-    res.send(data);
-    res.status(200);
+    res.status(200).send(data);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).send(err.message);
   }
 });
-
 
 app.get('/', async (req, res) => {
   try {
-    let url = req.url ? req.url == '/' ? './website/index.html' : req.url : './website/index.html';
-    console.log(`Reading file: ${url}`);
+    let url = req.url === '/' ? './website/index.html' : req.url;
     const data = await fs.readFile(url, 'utf-8');
-    res.send(data);
-    res.status(200);
+    res.status(200).send(data);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).send(err.message);
   }
 });
 
-app.on('request', (req, res) => {
-  console.log('Request received');
+app.use((req, res) => {
+  res.redirect('/');
 });
 
 app.listen(8080, () => {
