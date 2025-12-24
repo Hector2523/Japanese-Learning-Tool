@@ -1,5 +1,4 @@
 const express = require('express');
-const { serveFile } = require('./modules/serveFile.js');
 const fs = require('fs/promises');
 const path = require('path');
 const app = express();
@@ -7,6 +6,7 @@ const app = express();
 app.use('/styles', express.static(path.join(__dirname, 'website/styles')));
 app.use('/js', express.static(path.join(__dirname, 'website/js')));
 app.use('/login', express.static(path.join(__dirname, 'website/pages/login')));
+app.use('/register', express.static(path.join(__dirname, 'website/pages/login?page=register')));
 
 app.use((req, res, next) => {
   const host = req.get('Host');
@@ -19,8 +19,6 @@ app.use((req, res, next) => {
   console.log('Request received', req.originalUrl);
   next();
 });
-
-serveFile()
 
 app.get('/login', async (req, res) => {
   try {

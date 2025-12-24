@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('.login form');
+    const form = document.querySelector('aside.container form');
     if (!form) return;
 
     const username = document.getElementById('username');
     const password = document.getElementById('password');
     const submitErrorP = document.querySelector('.submit .error-message');
+    const title = document.title;
+    const urlQuery = new URLSearchParams(window.location.search);
+
+    console.log(urlQuery)
 
     const getContainer = (el) => el && el.closest('.container');
     const getErrorP = (container) => container && container.querySelector('.error-message');
@@ -32,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = getContainer(username);
         const val = (username.value || '').trim();
         if (val.length < 3) {
-            setError(container, 'Username must be at least 3 characters.');
+            setError(container, 'Username must be at least 3 character');
             return false;
         }
         setError(container, '');
@@ -75,9 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!okUser || !okPass) {
             ev.preventDefault();
             if (submitErrorP) {
-                const submitMsg = submitErrorP.querySelector('.message');
-                submitMsg.textContent = 'Please fix the highlighted errors before submitting.';
-                submitErrorP.classList.remove('hidden');
+                return;
             }
 
             if (!okUser) attachClearOnInput(username, validateUsername);
@@ -92,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitErrorP.classList.add('hidden');
             }
         }
+        console.warn('Validation passed, submitting form');
     });
 
     document.querySelectorAll('.error-message').forEach(p => {
