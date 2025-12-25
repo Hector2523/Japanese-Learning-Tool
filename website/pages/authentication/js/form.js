@@ -2,11 +2,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('aside.container form');
     if (!form) return;
 
-    const username = document.getElementById('username');
+    let reqType = 'login';
+    const ID = document.getElementById('ID');
     const password = document.getElementById('password');
+    const submitBtn = document.getElementById('submit-btn');
     const submitErrorP = document.querySelector('.submit .error-message');
-    const title = document.title;
+    const signUpCont = document.querySelector('p.signup');
+    const loginCont = document.querySelector('p.login');
+    const title = document.title = 'JP Learn';
     const urlQuery = new URLSearchParams(window.location.search);
+
+    if (urlQuery.has('page') && urlQuery.get('page') === 'register') {
+        document.title = title + ' - Register';
+        submitBtn.textContent = 'Register';
+        signUpCont.remove();
+        reqType = 'register';
+    } else {
+        document.title = title + ' - Login';
+        submitBtn.textContent = 'Login';
+        loginCont.remove();
+        reqType = 'login';
+    }
 
     console.log(urlQuery)
 
@@ -32,11 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const validateUsername = () => {
-        const container = getContainer(username);
-        const val = (username.value || '').trim();
+    const validateID = () => {
+        const container = getContainer(ID);
+        const val = (ID.value || '').trim();
         if (val.length < 3) {
-            setError(container, 'Username must be at least 3 character');
+            setError(container, 'ID must be at least 3 character');
             return false;
         }
         setError(container, '');
@@ -61,9 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.removeEventListener('input', handler);
                 if (submitErrorP) {
                     const submitMsg = submitErrorP.querySelector('.message');
-                    const userInvalid = username && username.getAttribute('aria-invalid') === 'true';
+                    const IDInvalid = ID && ID.getAttribute('aria-invalid') === 'true';
                     const passInvalid = password && password.getAttribute('aria-invalid') === 'true';
-                    if (!userInvalid && !passInvalid) {
+                    if (!IDInvalid && !passInvalid) {
                         submitMsg.textContent = '';
                         submitErrorP.classList.add('hidden');
                     }
@@ -74,15 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     form.addEventListener('submit', (ev) => {
-        const okUser = validateUsername();
+        ev.preventDefault();
+        const okID = validateID();
         const okPass = validatePassword();
-        if (!okUser || !okPass) {
-            ev.preventDefault();
+        if (!okID || !okPass) {
+            console.log(submitErrorP)
             if (submitErrorP) {
                 return;
             }
 
-            if (!okUser) attachClearOnInput(username, validateUsername);
+            if (!okID) attachClearOnInput(ID, validateID);
             if (!okPass) attachClearOnInput(password, validatePassword);
 
             const firstInvalid = form.querySelector('input[aria-invalid="true"]');
@@ -94,6 +111,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitErrorP.classList.add('hidden');
             }
         }
+
+
+        const idVal = (ID.value || '').trim();
+        const encryptedKey = encryptKey((password.value || '').trim());
+
+        fetch(`/api/auth/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: reqType.toLocaleUpperCase(),
+                ID: idVal,
+                apiKey: encryptedKey
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.warn(data)
+            if (data.code === 200) {
+                // window.location.href = '/authsuccess';
+            } else {
+                if (submitErrorP) {
+                    const submitMsg = submitErrorP.querySelector('.message');
+                    submitMsg.textContent = data.errType || 'An error occurred';
+                    console.error(data.message);
+                    submitErrorP.classList.remove('hidden');
+                }
+            }
+        })
+        .catch(err => {
+            if (submitErrorP) {
+                console.error(err);
+                const submitMsg = submitErrorP.querySelector('.message');
+                submitMsg.textContent = 'Network error';
+                submitErrorP.classList.remove('hidden');
+            }
+        });
+
         console.warn('Validation passed, submitting form');
     });
 
@@ -102,4 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const msg = p.querySelector('.message');
         if (!msg || !msg.textContent.trim()) p.classList.add('hidden');
     });
+
+    function encryptKey(str) {
+        let hash = 0;
+        if (str.length === 0) return hash;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // 32 bits
+        }
+        return hash;
+    }
 });

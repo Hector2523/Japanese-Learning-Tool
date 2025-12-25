@@ -10,6 +10,23 @@
 
 :root {
     --border-dinamic-layout-color: rgb(155, 155, 155);
+    --bg: #ffffff;
+    --text: #161616;
+    --muted: #6b6b6b;
+    --primary: #db409de1;
+    --primary-hover: #db409dc5;
+    --primary-active: #db409dff;
+    --btn-text: #ffffff;
+    --container-width: 90%;
+    --container-max: 1100px;
+    --radius: 6px;
+}
+
+.container {
+    width: var(--container-width);
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
 body {
@@ -18,62 +35,84 @@ body {
 }
 
 header {
-    position: relative;
-    height: 8vmin;
+    background: var(--bg);
     width: 100%;
-    display: flex;
-    justify-content: center;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04);
 }
 
-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 2px;
-    width: 95%;
-    background-color: var(--border-dinamic-layout-color);
-}
-
-header section {
-    width: 90%;
-    height: 100%;
+header .container {
+    height: 8vmin;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-header section aside.content div.logged {
-    display: none;
+.logo a {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
 }
 
-header section aside.content div.connect {
+nav.main-nav ul {
+    list-style: none;
     display: flex;
-    gap: 1.5vmin;
+    gap: 0.8rem;
+    align-items: center;
 }
 
-header section aside.content div.connect button {
-    cursor: pointer;
-    width: 8vmin;
-    height: 4vmin;
-    color: rgba(22, 22, 22, 0.884);
-    border-radius: 5px;
-    transition-duration: .4s;
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color .18s ease, transform .12s ease;
 }
 
-header section aside.content div.connect button.register {
-    background-color: white;
+.btn-primary {
+    background: var(--primary);
+    color: var(--btn-text);
 }
 
-header section aside.content div.connect button.register:hover {
-    background-color: #ececec;
+.btn-primary:hover {
+    background: var(--primary-hover);
 }
 
-header section aside.content div.connect button.login {
-    background-color: #db409dc5;
+.btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-dinamic-layout-color);
 }
 
-header section aside.content div.connect button.login:hover {
-    background-color: #db409de1;
+.hero {
+    padding: 3.5rem 0 4.5rem;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(219,64,157,0.03), rgba(255,255,255,0));
+}
+
+.hero .container {
+    max-width: 900px;
+    padding-top: 1rem;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+}
+
+.hero p {
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+}
+
+.hero-actions a { margin: 0 .5rem; }
+
+@media (max-width: 480px) {
+    header .container { height: 10vmin; }
+    .logo a { font-size: 1.1rem; }
+    nav.main-nav ul { gap: 0.4rem; }
+    .btn { padding: 0.5rem 0.8rem; }
+    .hero h2 { font-size: 1.4rem; }
 }

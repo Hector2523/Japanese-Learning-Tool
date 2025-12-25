@@ -8,19 +8,27 @@
 </head>
 <body>
     <header>
-        <section>
-            <aside class="info">
-                <p>JP - Learn</p>
-            </aside>
-            <aside class="content">
-                <div class="logged"></div>
-                <div class="connect">
-                    <button class="register">Register</button>
-                    <button class="login">Login</button>
-                </div>
-            </aside>
-        </section>
+        <div class="container">
+            <h1 class="logo"><a href="/" aria-label="JP Learn home">JP - Learn</a></h1>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul>
+                    <li><a class="btn btn-outline" href="/register">Register</a></li>
+                    <li><a class="btn btn-primary" href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
+
+    <main class="hero" role="main">
+        <div class="container">
+            <h2>Learn Japanese interactively</h2>
+            <p>Practice vocabulary, grammar and kanji with short lessons and quizzes tailored to your level.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="/register">Get started</a>
+                <a class="btn btn-outline" href="/login">Sign in</a>
+            </div>
+        </div>
+    </main>
 
     <script src="js/index.js"></script>
 </body>
