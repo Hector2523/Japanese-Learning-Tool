@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <div class="container">
+        <section class="container">
             <h1 class="logo"><a href="/" aria-label="JP Learn home">JP - Learn</a></h1>
             <nav class="main-nav" aria-label="Main navigation">
                 <ul>
@@ -16,20 +16,28 @@
                     <li><a class="btn btn-primary" href="/login">Login</a></li>
                 </ul>
             </nav>
-        </div>
+        </section>
     </header>
 
-    <main class="hero" role="main">
-        <div class="container">
+    <main role="main">
+        <section class="container">
             <h2>Learn Japanese interactively</h2>
             <p>Practice vocabulary, grammar and kanji with short lessons and quizzes tailored to your level.</p>
-            <div class="hero-actions">
+            <aside class="actions">
                 <a class="btn btn-primary" href="/register">Get started</a>
                 <a class="btn btn-outline" href="/login">Sign in</a>
-            </div>
-        </div>
+            </aside>
+        </section>
     </main>
 
+    <section class="sw">
+        <aside class="container">
+            <h1>Service Worker</h1>
+            <p class="message"></p>
+        </aside>
+    </section>
+
+    <script src="./SW/activate/activate.js"></script>
     <script src="js/index.js"></script>
 </body>
 </html>

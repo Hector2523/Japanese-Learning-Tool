@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let alreadyLoggedIn = false;
+
+    if(sessionStorage.getItem('logged') === 'true') {
+        alreadyLoggedIn = true;
+    }
+
     const form = document.querySelector('aside.container form');
     if (!form) return;
 
@@ -89,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('input', handler);
     };
 
-    form.addEventListener('submit', (ev) => {
+    form.addEventListener('submit', async (ev) => {
+        const init = performance.now();
         ev.preventDefault();
         const okID = validateID();
         const okPass = validatePassword();
@@ -114,44 +121,163 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         const idVal = (ID.value || '').trim();
-        const encryptedKey = encryptKey((password.value || '').trim());
+        const apiKeyRaw = (password.value || '').trim();
 
-        fetch(`/api/auth/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: reqType.toLocaleUpperCase(),
-                ID: idVal,
-                apiKey: encryptedKey
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.warn(data)
-            if (data.code === 200) {
-                // window.location.href = '/authsuccess';
+
+        const networkStart = performance.now();
+        try {
+            const data = await validateAndSubmit(idVal, apiKeyRaw, reqType);
+            const networkEnd = performance.now();
+            console.log(`Network roundtrip: ${networkEnd - networkStart} ms`);
+
+            console.warn(data);
+            if (data && data.code === 200) {
+                try {
+                    localStorage.setItem('encryptedKey', data.encryptedKey);
+                    localStorage.setItem('userData', JSON.stringify(data.userData));
+                } catch (e) {
+                    console.warn('Could not write to localStorage', e);
+                }
+
+                if (navigator.serviceWorker) {
+                    try {
+                        if (navigator.serviceWorker.controller) {
+                            navigator.serviceWorker.controller.postMessage({ type: 'SET_TOKEN', token: data.encryptedKey });
+                        } else if (navigator.serviceWorker.getRegistration) {
+                            navigator.serviceWorker.getRegistration().then(reg => {
+                                if (reg && reg.active) reg.active.postMessage({ type: 'SET_TOKEN', token: data.encryptedKey });
+                            }).catch(() => { });
+                        }
+                    } catch (e) {
+                        console.warn('Could not postMessage to Service Worker', e);
+                    }
+                }
+
+                (async () => {
+                    try {
+                        await persistUser(data.encryptedKey, data.userData);
+                        console.log('Background persist completed');
+                    } catch (err) {
+                        console.warn('Background persist failed:', err);
+                    }
+                })();
+
+                window.location.href = '/';
+                return;
             } else {
                 if (submitErrorP) {
                     const submitMsg = submitErrorP.querySelector('.message');
-                    submitMsg.textContent = data.errType || 'An error occurred';
-                    console.error(data.message);
+                    submitMsg.textContent = (data && (data.errType)) || 'An error occurred';
+                    console.error(data && data.message);
                     submitErrorP.classList.remove('hidden');
                 }
             }
-        })
-        .catch(err => {
+        } catch (err) {
             if (submitErrorP) {
                 console.error(err);
                 const submitMsg = submitErrorP.querySelector('.message');
-                submitMsg.textContent = 'Network error';
+                submitMsg.textContent = err && err.message === 'Invalid API Key' ? 'Invalid API Key' : 'Network error';
                 submitErrorP.classList.remove('hidden');
             }
+        }
+
+        const end = performance.now();
+        console.log(`Form total time (incl. UI work): ${Math.round(end - init)} ms`);
+    });
+
+    async function validateAndSubmit(idVal, apiKey, reqType) {
+        const submitResp = await fetch(`/api/auth/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: reqType.toLocaleUpperCase(),
+                ID: idVal,
+                apiKey: apiKey
+            })
         });
 
-        console.warn('Validation passed, submitting form');
-    });
+        if (!submitResp.ok) {
+            const text = await submitResp.text();
+            let data = null;
+            try { data = JSON.parse(text); } catch (e) { data = { message: text }; }
+            return data || { code: submitResp.status, message: text };
+        }
+
+        return await submitResp.json();
+    }
+
+    function persistUser(encryptedKey, userData) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const prev = localStorage.getItem('encryptedKey');
+                if (prev !== encryptedKey) {
+                    localStorage.setItem('encryptedKey', encryptedKey);
+                } else {
+                    console.debug('encryptedKey unchanged; not updating localStorage');
+                }
+            } catch (e) {
+                console.warn('Could not write encryptedKey to localStorage', e);
+            }
+
+            const payload = { encryptedKey, userData };
+            const json = JSON.stringify(payload, null, 2);
+            const resp = new Response(json, { headers: { 'Content-Type': 'application/json' } });
+
+            if (typeof caches !== 'undefined' && caches.open) {
+                try {
+                    const cache = await caches.open('user-data');
+                    const existingResp = await cache.match('/user-info.json');
+
+                    if (existingResp) {
+                        try {
+                            const existingText = await existingResp.text();
+                            if (existingText === json) {
+                                console.log('persistUser: cached data identical; skipping write');
+                                return resolve();
+                            } else {
+                                await cache.delete('/user-info.json');
+                            }
+                        } catch (err) {
+                            console.warn('persistUser: error reading existing cached response:', err);
+                        }
+                    }
+
+                    await cache.put('/user-info.json', resp);
+                    console.log('persistUser: cached user data successfully');
+
+                    try {
+                        localStorage.removeItem('userData');
+                        console.log('persistUser: removed userData from localStorage (using cache instead)');
+                    } catch (e) {
+                        console.warn('Could not remove userData from localStorage', e);
+                    }
+
+                    return resolve();
+
+                } catch (err) {
+                    console.warn('persistUser: cache write failed, falling back to localStorage', err);
+
+                    try {
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        console.log('persistUser: saved userData to localStorage as fallback');
+                        return resolve();
+                    } catch (e) {
+                        console.error('persistUser: localStorage fallback failed', e);
+                        return reject(e);
+                    }
+                }
+            } else {
+                console.warn('persistUser: Cache API not available, using localStorage');
+                try {
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    return resolve();
+                } catch (e) {
+                    console.error('persistUser: localStorage write failed', e);
+                    return reject(e);
+                }
+            }
+        });
+    }
 
     document.querySelectorAll('.error-message').forEach(p => {
         p.setAttribute('aria-live', 'polite');
@@ -159,14 +285,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!msg || !msg.textContent.trim()) p.classList.add('hidden');
     });
 
-    function encryptKey(str) {
-        let hash = 0;
-        if (str.length === 0) return hash;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // 32 bits
-        }
-        return hash;
-    }
+    if (alreadyLoggedIn) return location.href = '/';
 });

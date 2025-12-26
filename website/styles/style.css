@@ -22,13 +22,6 @@
     --radius: 6px;
 }
 
-.container {
-    width: var(--container-width);
-    max-width: var(--container-max);
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
 body {
     width: 100vw;
     min-height: 100vh;
@@ -61,7 +54,22 @@ nav.main-nav ul {
     align-items: center;
 }
 
-.btn {
+section.container {
+    width: var(--container-width);
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+section.container aside.actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+
+header nav.main-nav ul li a.btn,
+section.container aside.actions a.btn {
     display: inline-block;
     padding: 0.6rem 1rem;
     border-radius: var(--radius);
@@ -70,49 +78,74 @@ nav.main-nav ul {
     transition: background-color .18s ease, transform .12s ease;
 }
 
-.btn-primary {
+a.btn-primary {
     background: var(--primary);
     color: var(--btn-text);
 }
 
-.btn-primary:hover {
+a.btn-primary:hover {
     background: var(--primary-hover);
 }
 
-.btn-outline {
+a.btn-outline {
     background: transparent;
     color: var(--text);
     border: 1px solid var(--border-dinamic-layout-color);
 }
 
-.hero {
+main {
     padding: 3.5rem 0 4.5rem;
     text-align: center;
     background: linear-gradient(180deg, rgba(219,64,157,0.03), rgba(255,255,255,0));
 }
 
-.hero .container {
+main .container {
     max-width: 900px;
     padding-top: 1rem;
 }
 
-.hero h2 {
+main h2 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
     color: var(--text);
 }
 
-.hero p {
+main p {
     color: var(--muted);
     margin-bottom: 1.25rem;
 }
 
-.hero-actions a { margin: 0 .5rem; }
+body.no-sw main,
+body.no-sw header {
+    display: none;
+}
+
+body.no-sw section.sw {
+    display: flex;
+}
+
+section.sw {
+    width: 100%;
+    height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    padding: 2rem 1rem;
+}
+
+section.sw aside.container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    text-align: left;
+}
 
 @media (max-width: 480px) {
     header .container { height: 10vmin; }
     .logo a { font-size: 1.1rem; }
     nav.main-nav ul { gap: 0.4rem; }
     .btn { padding: 0.5rem 0.8rem; }
-    .hero h2 { font-size: 1.4rem; }
+    main h2 { font-size: 1.4rem; }
 }
