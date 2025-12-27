@@ -23,6 +23,7 @@ if ('serviceWorker' in navigator) {
             sessionStorage.setItem('logged', 'true');
         } else if (event.data && event.data.type === 'LOGOUT') {
             cleanStorage();
+            window.location.href = '/';
         }
     });
 } else {

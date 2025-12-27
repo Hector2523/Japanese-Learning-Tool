@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let loggedIn = false;
+    try {
+        const isLogged = sessionStorage.getItem('logged');
+        if (isLogged === 'true') {
+            loggedIn = true;
+        }
+    } catch (e) {
+        console.warn('Error checking login status', e);
+    }
+
+    if (loggedIn) {
+        const unloggedElements = document.querySelectorAll('.unlogged');
+        unloggedElements.forEach(el => el.style.display = 'none');
+        return;
+    }
+
+    const loggedElements = document.querySelectorAll('.logged');
+    loggedElements.forEach(el => el.style.display = 'none');
 
     const registerBtn = document.querySelector('header button.register');
     const loginBtn = document.querySelector('header button.login');
@@ -6,14 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginBtn) loginBtn.addEventListener('click', () => { location.href = '/login'; });
     if (registerBtn) registerBtn.addEventListener('click', () => { location.href = '/register'; });
 
-    // Rehydrate Service Worker with token from localStorage (if present) and write cache if needed
     (async () => {
         try {
             const encryptedKey = localStorage.getItem('encryptedKey');
             const userDataRaw = localStorage.getItem('userData');
             if (!encryptedKey || !userDataRaw) return;
 
-            // notify service worker to set in-memory token
             if (navigator.serviceWorker) {
                 try {
                     if (navigator.serviceWorker.controller) {
@@ -28,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // ensure the cache has a single atomic payload with encryptedKey + userData
             try {
                 if (typeof caches !== 'undefined' && caches.open) {
                     const payload = { encryptedKey, userData: JSON.parse(userDataRaw) };
@@ -39,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (existing) {
                         const existingText = await existing.text().catch(() => null);
                         if (existingText === json) {
-                            // already up-to-date
                             return;
                         }
                         await cache.delete('/user-info.json');

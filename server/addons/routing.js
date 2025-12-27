@@ -9,6 +9,7 @@ module.exports = async function registerRoutes(app) {
     app.use('/styles', express.static(path.join(__dirname, '..', '..', 'website', 'styles')));
     app.use('/js', express.static(path.join(__dirname, '..', '..', 'website', 'js')));
     app.use('/login', express.static(path.join(__dirname, '..', '..', 'website', 'pages', 'authentication')));
+    app.use('/404', express.static(path.join(__dirname, '..', '..', 'website', 'pages', '404')));
     app.use('/SW', express.static(path.join(__dirname, '..', '..', 'website', 'SW'), {
         setHeaders: (res, filePath) => {
             if (filePath.endsWith('.js')) {
@@ -16,6 +17,7 @@ module.exports = async function registerRoutes(app) {
             }
         }
     }));
+    app.set('strict routing', false)
 
     app.get('/register', (req, res) => res.redirect('/login?page=register'));
 
@@ -28,6 +30,8 @@ module.exports = async function registerRoutes(app) {
         if (origin && origin !== `http://${host}` && origin !== `https://${host}`) {
             return res.status(403).send('Forbidden: Invalid Origin');
         }
+
+        req.url = req.url.replace(/\/{2,}/g, '/');
 
         console.log('Request received', req.originalUrl);
         next();
@@ -179,7 +183,13 @@ module.exports = async function registerRoutes(app) {
         }
     });
 
+    app.get('/robots.txt', (req, res) => {
+        res.type('text/plain');
+        res.send(`User-agent: *
+Allow: /`);
+    });
+
     app.use((req, res) => {
-        res.redirect('/');
+        res.redirect('/404');
     });
 };

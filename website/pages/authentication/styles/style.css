@@ -3,9 +3,9 @@
 :root {
     --base-font-size: 16px;
     --input-expand: 3px;
-    --btn-bg: #db409de1;
-    --btn-bg-hover: #db409dc5;
-    --btn-bg-active: #db409dff;
+    --btn-bg: #b81f78;
+    --btn-bg-hover: #9e2d6f;
+    --btn-bg-active: #9e2d6f;
     --btn-text: #ffffff;
 }
 
@@ -196,7 +196,7 @@ body main section aside.container p.signup a,
 body main section aside.container p.login a {
     overflow: hidden;
     position: relative;
-    color: #db409de1;
+    color: #b81f78;
     text-decoration: none;
     font-weight: bold;
     transition-duration: .4s;
@@ -225,7 +225,7 @@ body main section aside.container p.login a:hover::after {
 
 body main section aside.container p.signup a:hover,
 body main section aside.container p.login a:hover {
-    color: rgb(184, 60, 134);
+    color: #8f165c;
 }
 
 body.no-sw main,

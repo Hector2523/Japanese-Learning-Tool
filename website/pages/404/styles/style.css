@@ -1,0 +1,115 @@
+@charset "UTF-8";
+
+/* =========================
+   RESET
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+/* =========================
+   VARIABLES (same palette)
+========================= */
+:root {
+    --text: #161616;
+    --muted: #6b6b6b;
+    --login-bg: #b81f78;
+    --login-bg-hover: #9e2d6f;
+    --login-text: #ffffff;
+    --radius: 6px;
+}
+
+/* =========================
+   BODY
+========================= */
+body {
+    min-height: 100vh;
+    width: 100vw;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text);
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+main section.container {
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius);
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+}
+
+/* =========================
+   TITLE
+========================= */
+main section.container h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+}
+
+/* =========================
+   DESCRIPTION
+========================= */
+main section.container p {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+/* =========================
+   BUTTON
+========================= */
+main section.container a.btn-login {
+    display: inline-block;
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius);
+    background: var(--login-bg);
+    color: var(--login-text);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.12s ease;
+}
+
+main section.container a.btn-login:hover {
+    background: var(--login-bg-hover);
+    transform: translateY(-1px);
+}
+
+main section.container a.btn-login:active {
+    transform: translateY(0);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 480px) {
+    main section.container {
+        padding: 2.2rem 1.5rem;
+    }
+
+    main section.container h1 {
+        font-size: 1.9rem;
+    }
+
+    main section.container p {
+        font-size: 0.95rem;
+    }
+}

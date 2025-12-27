@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const WaniKaniFetcher = require('./wanikani');
 
 async function verifyUser(apiKey) {
     try {
@@ -12,10 +13,29 @@ async function verifyUser(apiKey) {
 
 async function registerUser(encryptedKey, rawKey, ID) {
     try {
-        await fs.writeFile(path.join(__dirname, '..', 'usersData', `${encryptedKey}.json`), JSON.stringify({
-            Public: { ID: ID },
+        const directoryPath = path.join(__dirname, '..', 'usersData');
+        await fs.mkdir(directoryPath, { recursive: true });
+        let WKData;
+        const fetcher = new WaniKaniFetcher(rawKey, [
+                    'summary',
+                    'subjects',
+                    'assignments',
+                    'level_progressions',
+                    'review_statistics',
+                    'study_materials',
+                    'voice_actors',
+                ], 'GET');
+        await fetcher.init().then(results => {
+            WKData = results;
+        });
+
+        await fs.writeFile(path.join(directoryPath, `${encryptedKey}.json`), JSON.stringify({
+            Public: {
+                ID: ID, WaniKaniData: WKData
+            },
             Private: { apiKeys: { WaniKani: rawKey } }
         }, null, 2), 'utf-8');
+
         return true;
     } catch (err) {
         console.error('Error writing user file:', err);

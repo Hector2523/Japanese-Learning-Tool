@@ -1,75 +1,116 @@
 @charset "UTF-8";
 
+/* =========================
+   RESET
+========================= */
 * {
     margin: 0;
     padding: 0;
     outline: none;
     box-sizing: border-box;
     border: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
+/* =========================
+   CSS VARIABLES
+========================= */
 :root {
     --border-dinamic-layout-color: rgb(155, 155, 155);
     --bg: #ffffff;
     --text: #161616;
     --muted: #6b6b6b;
-    --primary: #db409de1;
-    --primary-hover: #db409dc5;
-    --primary-active: #db409dff;
-    --btn-text: #ffffff;
+
+    --login-bg: #b81f78;
+    --login-bg-hover: #9e2d6f;
+    --login-text: #ffffff;
+
     --container-width: 90%;
     --container-max: 1100px;
     --radius: 6px;
+
+    --header-height: 10vmin;
+
+    --menu-drop-bg: white;
+    --menu-drop-bg-hover: rgb(233, 230, 230);
+    --menu-text: #161616;
+    --menu-text-hover: #161616da;  
 }
 
+/* =========================
+   BODY
+========================= */
 body {
     width: 100vw;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
+/* =========================
+   HEADER
+========================= */
 header {
-    background: var(--bg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: var(--header-height);
     width: 100%;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    background: var(--bg);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    z-index: 1001;
 }
 
-header .container {
-    height: 8vmin;
+header
+section.container {
+    margin: 0 auto;
+    width: var(--container-width);
+    height: var(--header-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.logo a {
+/* =========================
+   LOGO
+========================= */
+header
+section.container
+div.logo {
+    user-select: none;
+}
+
+header
+section.container
+div.logo
+a {
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--text);
     text-decoration: none;
 }
 
-nav.main-nav ul {
+/* =========================
+   NAVIGATION (COMMON)
+========================= */
+header
+section.container
+nav.main-nav
+ul {
     list-style: none;
     display: flex;
     gap: 0.8rem;
     align-items: center;
 }
 
-section.container {
-    width: var(--container-width);
-    max-width: var(--container-max);
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-section.container aside.actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 0.8rem;
-    justify-content: center;
-}
-
-header nav.main-nav ul li a.btn,
-section.container aside.actions a.btn {
+/* =========================
+   UNLOGGED NAVIGATION
+========================= */
+header
+section.container
+nav.main-nav
+ul.unlogged
+li
+a {
     display: inline-block;
     padding: 0.6rem 1rem;
     border-radius: var(--radius);
@@ -78,43 +119,241 @@ section.container aside.actions a.btn {
     transition: background-color .18s ease, transform .12s ease;
 }
 
-a.btn-primary {
-    background: var(--primary);
-    color: var(--btn-text);
-}
-
-a.btn-primary:hover {
-    background: var(--primary-hover);
-}
-
-a.btn-outline {
+/* Register button (outline style) */
+header
+section.container
+nav.main-nav
+ul.unlogged
+li
+a.btn-register {
     background: transparent;
     color: var(--text);
     border: 1px solid var(--border-dinamic-layout-color);
 }
 
+/* Login button (primary style) */
+header
+section.container
+nav.main-nav
+ul.unlogged
+li
+a.btn-login {
+    background: var(--login-bg);
+    color: var(--login-text);
+}
+
+header
+section.container
+nav.main-nav
+ul.unlogged
+li
+a.btn-login:hover {
+    background: var(--login-bg-hover);
+}
+
+/* =========================
+   LOGGED NAVIGATION (future use)
+========================= */
+/*
+header
+section.container
+nav.main-nav
+ul.logged
+li
+a.btn-dashboard {
+    background: var(--login-bg);
+    color: var(--login-text);
+}
+*/
+
+/* =========================
+   MAIN
+========================= */
 main {
-    padding: 3.5rem 0 4.5rem;
+    position: relative;
+    min-height: 100vh;
+    padding-block: var(--header-height);
     text-align: center;
-    background: linear-gradient(180deg, rgba(219,64,157,0.03), rgba(255,255,255,0));
+    background: linear-gradient(
+        180deg,
+        rgba(219, 64, 157, 0.03),
+        rgba(255, 255, 255, 0)
+    );
 }
 
-main .container {
+main
+section.container {
+    width: var(--container-width);
     max-width: 900px;
-    padding-top: 1rem;
+    margin: 0 auto;
+    padding: 1rem;
 }
 
-main h2 {
+/* =========================
+   UNLOGGED CONTENT
+========================= */
+main
+section.container
+aside.unlogged
+h2 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
     color: var(--text);
 }
 
-main p {
+main
+section.container
+aside.unlogged
+p {
     color: var(--muted);
     margin-bottom: 1.25rem;
 }
 
+/* =========================
+   UNLOGGED ACTION BUTTONS
+========================= */
+main
+section.container
+aside.unlogged
+aside.actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+
+main
+section.container
+aside.unlogged
+aside.actions
+a {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color .18s ease, transform .12s ease;
+}
+
+main
+section.container
+aside.unlogged
+aside.actions
+a.btn-register {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-dinamic-layout-color);
+}
+
+main
+section.container
+aside.unlogged
+aside.actions
+a.btn-login {
+    background: var(--login-bg);
+    color: var(--login-text);
+}
+
+main
+section.container
+aside.unlogged
+aside.actions
+a.btn-login:hover {
+    background: var(--login-bg-hover);
+}
+
+/* =========================
+   LOGGED MENU
+========================= */
+
+body.no-sw menu {
+    display: none;
+}
+
+menu.site-menu {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    width: calc((100% / 2) - 35%);
+    height: 100%;
+    background: white;
+    border-left: 1px solid hsl(240 5.9% 90% / 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    z-index: 1000;
+}
+
+menu.site-menu section.endpoints section.drop aside.info {
+    padding: 3px .8vmin;
+    background-color: var(--menu-drop-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    transition-duration: .18s;
+}
+
+menu.site-menu section.endpoints section.drop aside.info:hover {
+    background-color: var(--menu-drop-bg-hover);
+}
+
+menu.site-menu section.endpoints section.drop aside.title {
+    display: flex;
+    align-items: center;
+    gap: .8vmin;
+    color: var(--menu-text);
+    transition-duration: .18s;
+}
+
+menu.site-menu section.endpoints section.drop aside.info:hover aside.title {
+    color: var(--menu-text-hover);
+}
+
+menu.site-menu section.endpoints section.drop aside.title div.icon {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+menu.site-menu section.endpoints section.drop aside.title div.icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+menu.site-menu section.endpoints section.drop div.drop-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    transition: transform .18s ease;
+}
+
+menu.site-menu section.endpoints section.drop div.drop-icon svg {
+    width: 100%;
+    height: 100%;
+    transform: translateY(15%) rotate(-90deg);
+    color: var(--menu-text);
+    transition-duration: .25s;
+}
+
+menu.site-menu section.endpoints section.drop aside.info:hover div.drop-icon svg {
+    transform: translateY(0);
+    color: var(--menu-text-hover);
+}
+menu.site-menu section.endpoints section.drop.open div.drop-icon svg {
+    transform: translateY(-15%) rotate(0);
+}
+
+/* =========================
+   SERVICE WORKER FALLBACK
+========================= */
 body.no-sw main,
 body.no-sw header {
     display: none;
@@ -135,17 +374,187 @@ section.sw {
     padding: 2rem 1rem;
 }
 
-section.sw aside.container h1 {
+section.sw
+aside.container
+h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
     color: var(--text);
     text-align: left;
 }
 
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 12vmin;
+    }
+
+    header {
+        height: var(--header-height);
+    }
+
+    header section.container {
+        height: var(--header-height);
+    }
+
+    header section.container div.logo a {
+        font-size: 1.2rem;
+    }
+
+    main
+    section.container
+    aside.unlogged
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    main
+    section.container
+    aside.unlogged
+    p {
+        font-size: 1rem;
+    }
+}
+
 @media (max-width: 480px) {
-    header .container { height: 10vmin; }
-    .logo a { font-size: 1.1rem; }
-    nav.main-nav ul { gap: 0.4rem; }
-    .btn { padding: 0.5rem 0.8rem; }
-    main h2 { font-size: 1.4rem; }
+    :root {
+        --header-height: 12vmin;
+    }
+    
+    header {
+        height: var(--header-height);
+    }
+
+    header section.container {
+        height: var(--header-height);
+    }
+
+    header
+    section.container
+    nav.main-nav {
+        display: none;
+    }
+
+    header section.container div.logo a {
+        font-size: 1.1rem;
+    }
+
+    header
+    section.container
+    nav.main-nav
+    ul.unlogged
+    li
+    a,
+    main
+    section.container
+    aside.unlogged
+    aside.actions
+    a {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    main
+    section.container
+    aside.unlogged
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    main
+    section.container
+    aside.unlogged
+    p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 320px) {
+    :root {
+        --header-height: 14vmin;
+    }
+    
+    header {
+        height: var(--header-height);
+    }
+
+    header section.container {
+        height: var(--header-height);
+    }
+
+    header section.container div.logo a {
+        font-size: 1rem;
+    }
+
+    header
+    section.container
+    nav.main-nav {
+        display: none;
+    }
+}
+
+@media (max-width: 812px) and (orientation: landscape) {
+    :root {
+        --header-height: 10vmin;
+    }
+
+    header {
+        height: var(--header-height);
+    }
+
+    header section.container {
+        height: var(--header-height);
+    }
+
+    header section.container div.logo a {
+        font-size: 1.2rem;
+    }
+
+    main section.container aside.unlogged h2 {
+        font-size: 1.5rem;
+    }
+
+    main section.container aside.unlogged p {
+        font-size: 0.95rem;
+    }
+
+    header section.container nav.main-nav ul.unlogged li a,
+    main section.container aside.unlogged aside.actions a {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+    :root {
+        --header-height: 15vmin;
+    }
+
+    header {
+        height: var(--header-height);
+    }
+
+    header section.container {
+        height: var(--header-height);
+    }
+
+    header section.container div.logo a {
+        font-size: 1.3rem;
+    }
+
+    main section.container aside.unlogged h2 {
+        font-size: 1.7rem;
+    }
+
+    main section.container aside.unlogged p {
+        font-size: 1rem;
+    }
+
+    header section.container nav.main-nav ul.unlogged li a,
+    main section.container aside.unlogged aside.actions a {
+        padding: 0.55rem 0.9rem;
+        font-size: 0.95rem;
+    }
 }

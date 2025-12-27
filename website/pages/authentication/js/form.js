@@ -156,13 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 (async () => {
                     try {
                         await persistUser(data.encryptedKey, data.userData);
+                        window.location.href = '/';
                         console.log('Background persist completed');
                     } catch (err) {
                         console.warn('Background persist failed:', err);
                     }
                 })();
 
-                window.location.href = '/';
+                await sessionStorage.setItem('logged', 'true');
+
                 return;
             } else {
                 if (submitErrorP) {
